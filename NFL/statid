@@ -1,0 +1,20 @@
+3, shotgun run?
+4, shotgun pass completion?
+6, shotgun formation
+10, rush
+14, pass incomplete play yards
+15, pass complete play yards
+16, pass touchdown
+21, reception
+22, touchdown reception
+52, fumble
+59, fumble recovery
+68, timeout
+79, tackle
+91, forced fumble
+
+106, fumble lost
+111, pass complete travel yards
+112, pass incomplete travel yards
+113, YACx (catch)
+115, YACy (might be yards after contact)
