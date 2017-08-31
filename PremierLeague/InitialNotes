@@ -1,0 +1,9 @@
+From whoscored.com utilize matchCentreData in the command window to pull JSON data
+From there, all match data can be found
+
+KeyNotes:
+	In the events section, x and y are the location the event occured
+	If a distribution event (pass,shot,goal,etc.) occurs, the EndX,EndY is where the ball ended up
+		The following event does not always start at the location of the previous EndX,EndY
+			Can use the difference in this to show ball movement of a player (ie: dribbling)
+	The when using video to reference X,Y data, don't forget that the camera angle depends on if they are going up/down left/right from origin.
