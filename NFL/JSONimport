@@ -1,0 +1,124 @@
+import requests
+import json
+import pandas as pd
+
+#imports the JSON from the url file and saves it as the parsed file
+url = 'http://www.nfl.com/liveupdate/game-center/2017083151/2017083151_gtd.json?random=15042941'
+r = requests.get(url)
+gamejson = json.loads(r.content)
+
+#tries to print json so it's easy to read
+#json.dumps(parsed, indent=4, sort_keys=True)
+
+#gets game id for future reference
+gameid = list(gamejson.keys())[0]
+
+#creates gamekeys dataframe for future reference
+gamekeys = pd.DataFrame(list(gamejson[gameid].keys()),columns=['gamekeys'])
+
+#Most valuble keys are home, away, and drives
+###find a way to collect matchup information such as date, time, weather, week#, 
+
+#start collecting home team data
+homedict = gamejson[gameid]['home']
+homekeys = pd.DataFrame(list(homedict.keys()),columns=['homekeys'])
+hometeam = homedict['abbr']
+homedata = pd.DataFrame.from_dict(homedict)
+print(homedata)
+
+homedict.values()
+
+gamekeys = pd.DataFrame.from_dict(gamejson[gameid])
+print(gamekeys)
+
+
+#begin looking at the drives
+drives = gamejson[gameid]['drives']
+
+for drive in drives.items():
+    
+    print(drive[1])
+    
+    #finds the quarter and time of the game that the play occured
+    #need to loop through the plays automatically instead of using '36'
+    qtr = plays['36']['qtr']
+    time = plays['36']['time']
+
+#begin looking at the individual plays in the drives
+#need to loop through the drives automatically instead of using '1'
+plays = drives['1']['plays']
+
+#finds the quarter and time of the game that the play occured
+#need to loop through the plays automatically instead of using '36'
+qtr = plays['36']['qtr']
+time = plays['36']['time']
+
+play = plays[]
+plays['36']['players']
+
+    
+    print(player_play)
+    
+
+playerid = list(plays['36']['players'])[0]
+player_play = list(plays['36']['players'][playerid])
+
+player_play = plays['36']['players']
+
+
+
+#begin to loop through plays in drive and all drives (2 separate)
+
+    #loops through each layer of the players involved in the play
+    for playerid in player_play.items():
+    
+        #need if statement for when playerid = 0 to append situational value to team
+        if playerid[0] == '0':
+            
+            #skip for now
+            continue
+            #identify all offense and defense stats that can be applied to individual players
+            #need to make a play start stat ie: 3rd down attempt
+            #need to make a play result stat ie: first down conversion
+            #identify which are kickoff type stats which are not applicable
+        print(playerid[0])
+        
+        print(playerid[1][0]['clubcode'])
+    
+        #loops through all player actions in the list, must look at second level to get values
+        for playeraction in playerid[1]:
+        
+            #try to keep data tidy for manipulation later on, start long and go wide
+            #copy from other NFL info to create dataframe
+            statid = playeraction['statId']
+            playername = playeraction['playerName']
+            team = playeraction['clubcode']
+            yards = playeraction['yards']
+
+
+dflist[0]
+
+print(statid['sequence' == '1'])
+
+
+
+posteam = drives['1']['posteam']
+
+
+
+
+
+drivesdf = pd.DataFrame.from_dict(drives)
+print(drivesdf)
+
+len(testdict)
+testdict.keys()
+testdict.values()
+
+
+from pandas.io.json import json_normalize
+
+testdf = json_normalize(gamejson)
+pd.read_json(gamejson)
+train = pd.DataFrame.from_dict(gamejson)
+testdf = pd.DataFrame.from_dict(gamejson)
