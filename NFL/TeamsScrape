@@ -1,0 +1,85 @@
+
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+from itertools import islice
+
+# Create a variable with the URL to the teams page
+url = 'http://www.espn.com/nfl/teams'
+
+# Scrape the HTML at the url
+r = requests.get(url)
+
+# Turn the HTML into a Beautiful Soup object
+soup = BeautifulSoup(r.text, 'lxml')
+
+#initializes teamlinkdf dataframe
+teamlinkdf = pd.DataFrame()
+
+# find all the divisions within the table
+for division_table in soup.find_all(class_='mod-content'):
+    
+    #finds each team within the division
+    for teamname in division_table.find_all('h5'):
+        
+        #creates teamlinkdf dataframe (finds each team name and each team link and modifies it to get the roster link through string replace)
+        teamlinkdf = teamlinkdf.append({'link': teamname.find('a').attrs.get('href').replace('/team/','/team/roster/'), \
+                                      'team': teamname.find('a').string}, \
+                                      ignore_index= True)
+        
+
+
+#creates HTML for rosterlink
+rroster = requests.get(teamlinkdf.link[0])
+# Turn the HTML into a Beautiful Soup object
+rostersoup = BeautifulSoup(rroster.text, 'lxml')
+
+#creates roster table
+roster_table = rostersoup.find('table')
+
+#initializes playertable playername and playerposition
+playertable = []
+playername = []
+playerlink = []
+playerposition = []
+playerheight = []
+
+#initializes playertable playername and playerposition
+playertable = []
+playername = []
+playerlink = []
+playerposition = []
+playerheight = []
+playerdf = pd.DataFrame()
+
+#begins to loop through every team and link
+for index, team in teamlinkdf.iterrows():
+
+        #creates HTML for link
+        rroster = requests.get(team.link)
+        # Turn the HTML into a Beautiful Soup object
+        rostersoup = BeautifulSoup(rroster.text, 'lxml')
+        
+        #creates roster table for all players on the team as an iterator
+        roster_table = iter(rostersoup.find('table').find_all('tr'))
+        
+        #iterates through each player on the roster
+        for player in roster_table:
+            
+            #checks if Stathead is true and skips 2 rows
+            if player.attrs.get('class')==['stathead']:
+                        
+                next(islice(roster_table, 1,2))
+                continue
+            
+            #creates the player row to look at
+            playerrow = player.find_all('td')
+            
+            #adds to playerdf dataframe
+            playerdf = playerdf.append({'team':team.team,\
+                                        'playername':playerrow[1].text,\
+                                        'playerlink':playerrow[1].find('a').attrs.get('href'),\
+                                        'position':playerrow[2].string.strip(),\
+                                        'height':playerrow[4].string.strip()},\
+                                        ignore_index = True)
+        

@@ -1,0 +1,108 @@
+
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+# Create a variable with the URL to this tutorial
+url = 'http://www.espn.com/nfl/player/gamelog/_/id/2580/year/2016'
+
+# Scrape the HTML at the url
+r = requests.get(url)
+
+# Turn the HTML into a Beautiful Soup object
+soup = BeautifulSoup(r.text, 'lxml')
+
+columns = []
+
+# Create an object of the first object that is class=dataframe
+column_table = soup.find(class_='colhead')
+
+# Find all the <td> tag pairs, to create column headers.
+for row in column_table.find_all('td'):
+    
+    # Create a variable of the string inside 1st <td> tag pair,
+    name = row.string.strip()
+    # and append it to first_name variable
+    columns.append(name)
+
+#insert new column names and modify rushing column names
+columns.insert(1,'HOME_V_AWAY')
+columns.insert(4,'SCORE')
+columns[-4] = 'RUSHS'
+columns[-3] = 'RUSH_YDS'
+columns[-2] = 'RUSH_AVG'
+columns[-1] = 'RUSH_LNG'
+
+#initialize lists
+date = []
+home_v_away = []
+w_l = []
+opp = []
+score =[]
+data = []
+rem_data = []
+
+#finds player name
+playername = soup.find_all('h1')[0].string.strip()
+
+
+//*[@id="content"]/script[2]/text()
+#finds ESPN player id
+playerid= soup.find_all('script')[2]
+test=playerid.get('var')
+print(playerid)
+playerid.text
+
+# Create an object of the first object that is class=dataframe
+data_table = soup.find_all('table')[1]
+
+# Find all the <td> tag pairs, to create dataframe.
+for col in data_table.find_all('tr')[2:]:
+    
+    #checks if last row value and breaks out
+    if col.attrs.get('class')==['total'] :
+        
+        break
+     
+    #pulls out date from first 'td'
+    date.append(col.find_all('td')[0].string.strip())
+    
+    #finds class game-location and pulls out @ or vs. for home or away
+    home_v_away.append(col.find(class_ = 'game-location').string.strip())
+    
+    #finds class team-name to find opponent
+    opp.append(col.find(class_ = 'team-name').string.strip())
+    
+    #finds 'span' for if the team won or lost
+    w_l.append(col.find('span').string.strip())
+    
+    #finds the 3rd type 'a' to find out what the score of the game was
+    score.append(col.find_all('a')[-1].text)
+    
+    #initializes rem_data
+    rem_data=[]
+    
+    #finds the remaining data and appends it to a list
+    for rem_col in col.find_all('td')[3:]:
+        
+        #appends data to list
+        rem_data.append(rem_col.string.strip())
+    
+    #appends the data to the larger list
+    data.append(rem_data)
+    
+#convert to dataframes
+date = pd.DataFrame(date)    
+home_v_away = pd.DataFrame(home_v_away)
+opp = pd.DataFrame(opp)
+score = pd.DataFrame(score)
+w_l = pd.DataFrame(w_l)
+data= pd.DataFrame(data)
+
+#combine dataframes
+fulldata = pd.concat([date,home_v_away,opp,score,w_l,data],axis=1)
+
+
+#set column names
+fulldata.columns = columns
+
