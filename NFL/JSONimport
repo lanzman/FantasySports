@@ -32,17 +32,81 @@ gamekeys = pd.DataFrame.from_dict(gamejson[gameid])
 print(gamekeys)
 
 
-#begin looking at the drives
-drives = gamejson[gameid]['drives']
+#begin looking at the drives of the JSON file
+#uses the gamejson object and game id to select the correct JSON file and the 'drives' layer for drive info
+#since it's essentially a dictionary, it needs to look at the .items and turn it to a list to iterate over
+drives = list(gamejson[gameid]['drives'].items())
+print(drives)
 
-for drive in drives.items():
+#See Summary below for info on looping and indexes from the JSON
+#first index is to the drive, second index is the info, 3rd is to get to the plays
+#cannot get any deeper because now looking at another dictionary
+#4th index is the play of the drive, 5th is the info from the play, 6th is to get the players
+#cannot get any deeper because now looking at another dictonary
+#7th index is the player of the play, 8th index is the info from the player
+#9th index is the stat of the player, 10th index is the label of the info on the play
+#list(list(drives[0][1]['plays'].items())[0][1]['players'].items())[0][1][0]['playerName']
+
+#creates the playerstatdf where all data will be stored for analysis later
+playerstatdf = pd.DataFrame()
+
+#loops through all of the drives
+for drive in drives[0:2]:
     
-    print(drive[1])
+    #creates the list of plays for the drive
+    driveplays = list(drive[1]['plays'].items())
+    
+    #loops through all of the plays in the drive    
+    for play in driveplays:
+        
+        #creates the list of players involved on the play
+        playplayers = list(play[1]['players'].items())
+            
+        #loops through all of the players involved on the play        
+        for player in playplayers:
+            
+            #if the player is '0' this indicates a teamstat situation
+            if player[0] == '0':
+                
+                print('TEAM STAT')
+                
+                teamstatteam = player[1]['clubcode']
+                
+                
+            else
+                
+                #look into applying this data to the applicable player
+                #possibly remove the continue and have the stat logged normally
+                teamstat = None
+                
+                continue
+            
+            #loops through all of the stats for the player on the play
+            for playerstat in player[1]:
+                
+                #appends info the the playerstatdf for additional consumption later
+                playerstatdf = playerstatdf.append({'team' : playerstat['clubcode'], \
+                                                    'playerName' : playerstat['playerName'], \
+                                                    'statId' : playerstat['statId'], \
+                                                    'yards' : playerstat['yards']}, \
+                                                    ignore_index = True)
+                                                    
+                                                    #add info about the drive #, play # etc.
+
+
+
+
+
+
+
+driveplays = list(test[1]['plays'].items())
     
     #finds the quarter and time of the game that the play occured
     #need to loop through the plays automatically instead of using '36'
-    qtr = plays['36']['qtr']
-    time = plays['36']['time']
+    #qtr = plays['36']['qtr']
+    #time = plays['36']['time']
+
+
 
 #begin looking at the individual plays in the drives
 #need to loop through the drives automatically instead of using '1'
